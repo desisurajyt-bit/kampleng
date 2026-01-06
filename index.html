@@ -2,45 +2,59 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>AFCON Horizontal Style - Pro Controller v9.5</title>
+    <title>AFCON Horizontal Style - Pro Controller v9.6</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap');
         :root { --panel-bg: #2b2b2b; --timer-bg: #1a1a1a; --score-bg: #000000; --team-bg: #e0e0e0; }
         body { margin: 0; padding: 20px; font-family: 'Roboto', sans-serif; background: transparent; overflow-x: hidden; }
         
-        /* SCOREBOARD DESIGN BASED ON IMAGE */
+        /* SCOREBOARD CONTAINER - FIXED POSITIONING */
         .scoreboard-container { 
             position: fixed; 
             top: 20px; 
             left: 50px; 
             display: flex; 
-            align-items: center; 
+            align-items: flex-start; /* Align to top to prevent vertical shifting */
             height: 60px;
+            width: 750px; /* Fixed width to prevent any right/left movement */
             box-shadow: 0 4px 10px rgba(0,0,0,0.4);
             border-radius: 4px;
-            overflow: hidden;
         }
 
+        /* TIMER BOX - MODIFIED FOR VERTICAL STOPPAGE */
         .timer-box { 
             background: var(--timer-bg); 
             color: white; 
             height: 100%; 
-            min-width: 100px; 
+            width: 120px; /* Fixed width */
             display: flex; 
+            flex-direction: column; /* Stack minutes and extra time vertically */
             justify-content: center; 
             align-items: center; 
-            font-size: 36px; 
-            font-weight: 400; 
-            padding: 0 15px;
+            z-index: 5;
+        }
+
+        .main-time {
+            font-size: 32px; 
+            font-weight: 400;
+            line-height: 1;
+        }
+
+        .extra-time {
+            font-size: 16px; 
+            color: #ffb700; /* Yellowish color for stoppage time */
+            font-weight: 700;
+            margin-top: 2px;
         }
 
         .team-section {
             background: var(--team-bg);
             color: black;
             height: 100%;
+            flex-grow: 1;
             display: flex;
             align-items: center;
-            padding: 0 15px;
+            justify-content: center;
             font-size: 32px;
             font-weight: 700;
         }
@@ -57,19 +71,18 @@
             background: var(--score-bg);
             color: white;
             height: 100%;
-            min-width: 60px;
+            min-width: 70px;
             display: flex;
             justify-content: center;
             align-items: center;
             font-size: 48px;
             font-weight: 400;
-            border-left: 2px solid #555;
-            border-right: 2px solid #555;
-            border-radius: 4px;
+            border-left: 2px solid #333;
+            border-right: 2px solid #333;
         }
 
         /* CONTROLLER LAYOUT */
-        .controller { background: #2b2b2b; color: white; padding: 20px; border-radius: 10px; width: 950px; margin: 150px auto 40px auto; border: 1px solid #444; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; position: relative; z-index: 10; }
+        .controller { background: #2b2b2b; color: white; padding: 20px; border-radius: 10px; width: 950px; margin: 180px auto 40px auto; border: 1px solid #444; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; position: relative; z-index: 10; }
         .control-box { border: 1px solid #444; padding: 12px; border-radius: 6px; background: #333; }
         h3 { margin-top: 0; font-size: 13px; text-transform: uppercase; color: #aaa; border-bottom: 1px solid #555; padding-bottom: 5px; }
         .input-row { display: flex; align-items: center; margin-bottom: 8px; font-size: 12px; }
@@ -89,7 +102,8 @@
 
     <div class="scoreboard-container">
         <div class="timer-box">
-            <span id="ui-timer">LIVE</span>
+            <span id="ui-main-time" class="main-time">LIVE</span>
+            <span id="ui-extra-time" class="extra-time"></span>
         </div>
         <div class="team-section">
             <img id="ui-h-flag" src="" class="flag">
@@ -151,32 +165,39 @@
             
             const tBg = document.getElementById('cfg-t-bg').value; 
             const tClr = document.getElementById('cfg-t-clr').value;
-            
-            document.querySelectorAll('.team-section').forEach(el => {
-                el.style.backgroundColor = tBg;
-                el.style.color = tClr;
-            });
+            document.querySelectorAll('.team-section').forEach(el => { el.style.backgroundColor = tBg; el.style.color = tClr; });
 
             let pad = (v) => v < 10 ? "0"+v : v;
+            let uiMain = document.getElementById('ui-main-time');
+            let uiExtra = document.getElementById('ui-extra-time');
 
             if (!isStarted && !isBreakStatic) {
-                document.getElementById('ui-timer').innerText = "LIVE";
+                uiMain.innerText = "LIVE";
+                uiExtra.innerText = "";
                 return;
             }
 
             if (isBreakStatic) {
-                document.getElementById('ui-timer').innerText = "45+09:00";
+                uiMain.innerText = "45:00";
+                uiExtra.innerText = "+09:00";
                 return;
             }
 
             let m = Math.floor(totalSecs / 60); 
             let rs = totalSecs % 60; 
 
+            // Stoppage logic: Show base minute + extra time below
             if (totalSecs > 2700 && !isSecondHalf) {
-                document.getElementById('ui-timer').innerText = "45+" + pad(m-45) + ":" + pad(rs);
+                uiMain.innerText = "45:00";
+                uiExtra.innerText = "+" + pad(m-45) + ":" + pad(rs);
             } 
+            else if (totalSecs > 5400) { // 90+ Stoppage
+                 uiMain.innerText = "90:00";
+                 uiExtra.innerText = "+" + pad(m-90) + ":" + pad(rs);
+            }
             else {
-                document.getElementById('ui-timer').innerText = pad(m) + ":" + pad(rs);
+                uiMain.innerText = pad(m) + ":" + pad(rs);
+                uiExtra.innerText = "";
             }
         }
 
@@ -218,12 +239,7 @@
             updateUI();
         }
 
-        function stopTimer() { 
-            clearInterval(matchInterval); 
-            matchInterval = null; 
-            isStarted = false; 
-            updateUI();
-        }
+        function stopTimer() { clearInterval(matchInterval); matchInterval = null; isStarted = false; updateUI(); }
         
         function resetAll() { 
             stopTimer(); 
