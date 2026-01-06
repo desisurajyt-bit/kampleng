@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AFCON Horizontal Style - Pro Controller v9.5</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap');
+        :root { --panel-bg: #2b2b2b; --timer-bg: #1a1a1a; --score-bg: #000000; --team-bg: #e0e0e0; }
+        body { margin: 0; padding: 20px; font-family: 'Roboto', sans-serif; background: transparent; overflow-x: hidden; }
+        
+        /* SCOREBOARD DESIGN BASED ON IMAGE */
+        .scoreboard-container { 
+            position: fixed; 
+            top: 20px; 
+            left: 50px; 
+            display: flex; 
+            align-items: center; 
+            height: 60px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .timer-box { 
+            background: var(--timer-bg); 
+            color: white; 
+            height: 100%; 
+            min-width: 100px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            font-size: 36px; 
+            font-weight: 400; 
+            padding: 0 15px;
+        }
+
+        .team-section {
+            background: var(--team-bg);
+            color: black;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .flag {
+            width: 50px;
+            height: 30px;
+            object-fit: cover;
+            margin: 0 10px;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .score-box {
+            background: var(--score-bg);
+            color: white;
+            height: 100%;
+            min-width: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 48px;
+            font-weight: 400;
+            border-left: 2px solid #555;
+            border-right: 2px solid #555;
+            border-radius: 4px;
+        }
+
+        /* CONTROLLER LAYOUT */
+        .controller { background: #2b2b2b; color: white; padding: 20px; border-radius: 10px; width: 950px; margin: 150px auto 40px auto; border: 1px solid #444; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; position: relative; z-index: 10; }
+        .control-box { border: 1px solid #444; padding: 12px; border-radius: 6px; background: #333; }
+        h3 { margin-top: 0; font-size: 13px; text-transform: uppercase; color: #aaa; border-bottom: 1px solid #555; padding-bottom: 5px; }
+        .input-row { display: flex; align-items: center; margin-bottom: 8px; font-size: 12px; }
+        .input-row label { width: 150px; }
+        input { padding: 5px; border: 1px solid #555; border-radius: 4px; background: #222; color: white; }
+        .short { width: 60px; text-align: center; }
+        .full { flex-grow: 1; }
+        .button-zone { grid-column: span 2; display: flex; gap: 10px; justify-content: center; }
+        button { padding: 10px 22px; font-weight: bold; cursor: pointer; border: none; border-radius: 4px; text-transform: uppercase; transition: 0.2s; }
+        .btn-start { background: #28a745; color: white; }
+        .btn-stop { background: #dc3545; color: white; }
+        .btn-reset { background: #6c757d; color: white; }
+        .btn-copy { background: #007bff; color: white; }
+    </style>
+</head>
+<body>
+
+    <div class="scoreboard-container">
+        <div class="timer-box">
+            <span id="ui-timer">LIVE</span>
+        </div>
+        <div class="team-section">
+            <img id="ui-h-flag" src="" class="flag">
+            <span id="ui-h-name">EGY</span>
+        </div>
+        <div class="score-box" id="ui-h-score">0</div>
+        <div class="score-box" id="ui-a-score">0</div>
+        <div class="team-section">
+            <span id="ui-a-name">BEN</span>
+            <img id="ui-a-flag" src="" class="flag">
+        </div>
+    </div>
+
+    <div class="controller">
+        <div class="control-box">
+            <h3>Match Timing</h3>
+            <div class="input-row"><label>Manual (M:S):</label><input type="number" id="cfg-m" class="short" value="0" oninput="manualSync()"> : <input type="number" id="cfg-s" class="short" value="0" oninput="manualSync()"></div>
+            <div class="input-row"><label>Kickoff (HH:MM):</label><input type="number" id="cfg-sh" class="short" placeholder="HH"> : <input type="number" id="cfg-sm" class="short" placeholder="MM"></div>
+        </div>
+        <div class="control-box">
+            <h3>Match Data</h3>
+            <div class="input-row"><label>Home Name/Goal:</label><input type="text" id="cfg-hn" class="short" value="EGY"> <input type="number" id="cfg-hg" class="short" value="0"></div>
+            <div class="input-row"><label>Away Name/Goal:</label><input type="text" id="cfg-an" class="short" value="BEN"> <input type="number" id="cfg-ag" class="short" value="0"></div>
+        </div>
+        <div class="control-box">
+            <h3>Visuals</h3>
+            <div class="input-row"><label>Team BG Color:</label><input type="text" id="cfg-t-bg" class="full" value="#e0e0e0"></div>
+            <div class="input-row"><label>Team Text Color:</label><input type="text" id="cfg-t-clr" class="full" value="#000000"></div>
+        </div>
+        <div class="control-box">
+            <h3>Flag Links</h3>
+            <div class="input-row"><label>Home Flag:</label><input type="text" id="cfg-h-f" class="full" value="https://flagcdn.com/w160/eg.png"></div>
+            <div class="input-row"><label>Away Flag:</label><input type="text" id="cfg-a-f" class="full" value="https://flagcdn.com/w160/bj.png"></div>
+        </div>
+        <div class="button-zone">
+            <button class="btn-start" onclick="startTimer()">Start</button>
+            <button class="btn-stop" onclick="stopTimer()">Stop</button>
+            <button class="btn-reset" onclick="resetAll()">Reset</button>
+            <button class="btn-copy" onclick="copyURL()">Copy Link</button>
+        </div>
+    </div>
+
+    <script>
+        let totalSecs = 0; 
+        let matchInterval = null; 
+        let isStarted = false; 
+        let isBreakStatic = false;
+        let staticElapsed = 0;
+        let isSecondHalf = false;
+        let lastAutoStartMin = -1;
+
+        function updateUI() {
+            document.getElementById('ui-h-name').innerText = document.getElementById('cfg-hn').value.toUpperCase();
+            document.getElementById('ui-a-name').innerText = document.getElementById('cfg-an').value.toUpperCase();
+            document.getElementById('ui-h-score').innerText = document.getElementById('cfg-hg').value; 
+            document.getElementById('ui-a-score').innerText = document.getElementById('cfg-ag').value;
+            document.getElementById('ui-h-flag').src = document.getElementById('cfg-h-f').value; 
+            document.getElementById('ui-a-flag').src = document.getElementById('cfg-a-f').value;
+            
+            const tBg = document.getElementById('cfg-t-bg').value; 
+            const tClr = document.getElementById('cfg-t-clr').value;
+            
+            document.querySelectorAll('.team-section').forEach(el => {
+                el.style.backgroundColor = tBg;
+                el.style.color = tClr;
+            });
+
+            let pad = (v) => v < 10 ? "0"+v : v;
+
+            if (!isStarted && !isBreakStatic) {
+                document.getElementById('ui-timer').innerText = "LIVE";
+                return;
+            }
+
+            if (isBreakStatic) {
+                document.getElementById('ui-timer').innerText = "45+09:00";
+                return;
+            }
+
+            let m = Math.floor(totalSecs / 60); 
+            let rs = totalSecs % 60; 
+
+            if (totalSecs > 2700 && !isSecondHalf) {
+                document.getElementById('ui-timer').innerText = "45+" + pad(m-45) + ":" + pad(rs);
+            } 
+            else {
+                document.getElementById('ui-timer').innerText = pad(m) + ":" + pad(rs);
+            }
+        }
+
+        function manualSync() {
+            let manualMin = parseInt(document.getElementById('cfg-m').value) || 0;
+            let manualSec = parseInt(document.getElementById('cfg-s').value) || 0;
+            totalSecs = manualMin * 60 + manualSec;
+            isSecondHalf = manualMin >= 45;
+            updateUI();
+        }
+
+        function handleTimeFlow() {
+            if (totalSecs === 3240 && !isSecondHalf && !isBreakStatic) {
+                isBreakStatic = true;
+                staticElapsed = 0;
+                return;
+            }
+
+            if (isBreakStatic) {
+                staticElapsed++;
+                if (staticElapsed >= 480) { 
+                    isBreakStatic = false;
+                    isSecondHalf = true;
+                    totalSecs = 2700; 
+                }
+            } else {
+                totalSecs++;
+                document.getElementById('cfg-m').value = Math.floor(totalSecs / 60);
+                document.getElementById('cfg-s').value = totalSecs % 60;
+            }
+            updateUI();
+        }
+
+        function startTimer() { 
+            if (matchInterval) return; 
+            isStarted = true;
+            manualSync();
+            matchInterval = setInterval(handleTimeFlow, 1000); 
+            updateUI();
+        }
+
+        function stopTimer() { 
+            clearInterval(matchInterval); 
+            matchInterval = null; 
+            isStarted = false; 
+            updateUI();
+        }
+        
+        function resetAll() { 
+            stopTimer(); 
+            isBreakStatic = false; isSecondHalf = false; lastAutoStartMin = -1;
+            totalSecs = 0; document.getElementById('cfg-m').value = 0; document.getElementById('cfg-s').value = 0; 
+            updateUI(); 
+        }
+
+        function copyURL() {
+            const params = new URLSearchParams({
+                hn: document.getElementById('cfg-hn').value, an: document.getElementById('cfg-an').value,
+                hg: document.getElementById('cfg-hg').value, ag: document.getElementById('cfg-ag').value,
+                tBg: document.getElementById('cfg-t-bg').value, tClr: document.getElementById('cfg-t-clr').value,
+                hf: document.getElementById('cfg-h-f').value, af: document.getElementById('cfg-a-f').value, 
+                sh: document.getElementById('cfg-sh').value, sm: document.getElementById('cfg-sm').value, 
+                cm: document.getElementById('cfg-m').value, cs: document.getElementById('cfg-s').value
+            });
+            const fullURL = window.location.href.split('?')[0] + '?' + params.toString();
+            const textArea = document.createElement("textarea"); textArea.value = fullURL; document.body.appendChild(textArea); textArea.select();
+            document.execCommand('copy'); document.body.removeChild(textArea);
+            alert("Link Copied!");
+        }
+
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const fields = {
+                'cfg-hn': 'hn', 'cfg-an': 'an', 'cfg-hg': 'hg', 'cfg-ag': 'ag',
+                'cfg-t-bg': 'tBg', 'cfg-t-clr': 'tClr', 'cfg-h-f': 'hf', 'cfg-a-f': 'af', 
+                'cfg-sh': 'sh', 'cfg-sm': 'sm', 'cfg-m': 'cm', 'cfg-s': 'cs'
+            };
+            for (let id in fields) {
+                let val = urlParams.get(fields[id]);
+                if (val !== null) document.getElementById(id).value = val;
+            }
+            updateUI();
+        };
+
+        setInterval(() => { 
+            let h = document.getElementById('cfg-sh').value; 
+            let m = document.getElementById('cfg-sm').value; 
+            let now = new Date();
+            if (h !== "" && m !== "" && !isStarted && !isBreakStatic) { 
+                if (now.getHours() == parseInt(h) && now.getMinutes() == parseInt(m) && lastAutoStartMin !== now.getMinutes()) {
+                    lastAutoStartMin = now.getMinutes();
+                    startTimer(); 
+                }
+            } 
+        }, 1000);
+
+        setInterval(updateUI, 500);
+    </script>
+</body>
+</html>
