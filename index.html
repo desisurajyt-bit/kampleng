@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>AFCON Horizontal Style - Pro Controller v9.7</title>
+    <title>AFCON Horizontal Style - Pro Controller v9.8</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap');
         :root { --panel-bg: #2b2b2b; --timer-bg: #1a1a1a; --score-bg: #000000; --team-bg: #e0e0e0; }
@@ -15,18 +15,18 @@
             left: 50px; 
             display: flex; 
             align-items: flex-start; 
-            height: 100px; /* Increased height for bigger logos */
-            width: 950px; /* Increased width to maintain proportions */
+            height: 100px; 
+            width: 1000px; /* Increased fixed width to prevent any movement */
             box-shadow: 0 4px 10px rgba(0,0,0,0.4);
             border-radius: 4px;
         }
 
-        /* TIMER BOX */
+        /* TIMER BOX - WIDER & LARGER TEXT */
         .timer-box { 
             background: var(--timer-bg); 
             color: white; 
             height: 100%; 
-            width: 150px; /* Increased width */
+            width: 180px; /* Wider timer box */
             display: flex; 
             flex-direction: column; 
             justify-content: center; 
@@ -35,13 +35,13 @@
         }
 
         .main-time {
-            font-size: 44px; /* Bigger font for bigger box */
-            font-weight: 400;
+            font-size: 56px; /* Bigger timer font */
+            font-weight: 700;
             line-height: 1;
         }
 
         .extra-time {
-            font-size: 20px; /* Bigger font */
+            font-size: 24px; /* Bigger stoppage font */
             color: #ffb700; 
             font-weight: 700;
             margin-top: 4px;
@@ -55,15 +55,15 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 40px; /* Bigger font */
+            font-size: 40px; 
             font-weight: 700;
         }
 
-        /* BIGGER LOGO SPACE */
+        /* LARGE LOGO SPACE */
         .flag {
-            width: 120px; /* Significantly wider */
-            height: 80px;  /* Significantly taller */
-            object-fit: contain; /* Ensures full logo is visible */
+            width: 120px; 
+            height: 80px;  
+            object-fit: contain; 
             margin: 0 15px;
             border: 1px solid rgba(0,0,0,0.1);
         }
@@ -72,18 +72,18 @@
             background: var(--score-bg);
             color: white;
             height: 100%;
-            min-width: 90px; /* Increased width */
+            min-width: 90px; 
             display: flex; 
             justify-content: center; 
             align-items: center; 
-            font-size: 60px; /* Bigger font */
+            font-size: 60px; 
             font-weight: 400;
             border-left: 2px solid #333;
             border-right: 2px solid #333;
         }
 
         /* CONTROLLER LAYOUT */
-        .controller { background: #2b2b2b; color: white; padding: 20px; border-radius: 10px; width: 950px; margin: 220px auto 40px auto; border: 1px solid #444; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; position: relative; z-index: 10; }
+        .controller { background: #2b2b2b; color: white; padding: 20px; border-radius: 10px; width: 950px; margin: 240px auto 40px auto; border: 1px solid #444; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; position: relative; z-index: 10; }
         .control-box { border: 1px solid #444; padding: 12px; border-radius: 6px; background: #333; }
         h3 { margin-top: 0; font-size: 13px; text-transform: uppercase; color: #aaa; border-bottom: 1px solid #555; padding-bottom: 5px; }
         .input-row { display: flex; align-items: center; margin-bottom: 8px; font-size: 12px; }
@@ -96,7 +96,6 @@
         .btn-start { background: #28a745; color: white; }
         .btn-stop { background: #dc3545; color: white; }
         .btn-reset { background: #6c757d; color: white; }
-        .btn-copy { background: #007bff; color: white; }
     </style>
 </head>
 <body>
@@ -143,7 +142,7 @@
             <button class="btn-start" onclick="startTimer()">Start</button>
             <button class="btn-stop" onclick="stopTimer()">Stop</button>
             <button class="btn-reset" onclick="resetAll()">Reset</button>
-            <button class="btn-copy" onclick="copyURL()">Copy Link</button>
+            <button style="background:#007bff; color:white;" onclick="copyURL()">Copy Link</button>
         </div>
     </div>
 
@@ -258,8 +257,7 @@
                 cm: document.getElementById('cfg-m').value, cs: document.getElementById('cfg-s').value
             });
             const fullURL = window.location.href.split('?')[0] + '?' + params.toString();
-            const textArea = document.createElement("textarea"); textArea.value = fullURL; document.body.appendChild(textArea); textArea.select();
-            document.execCommand('copy'); document.body.removeChild(textArea);
+            navigator.clipboard.writeText(fullURL);
             alert("Link Copied!");
         }
 
