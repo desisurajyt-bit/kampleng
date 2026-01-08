@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>AFCON Horizontal Style - Pro Controller v9.6</title>
+    <title>AFCON Horizontal Style - Pro Controller v9.7</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap');
         :root { --panel-bg: #2b2b2b; --timer-bg: #1a1a1a; --score-bg: #000000; --team-bg: #e0e0e0; }
@@ -14,37 +14,37 @@
             top: 20px; 
             left: 50px; 
             display: flex; 
-            align-items: flex-start; /* Align to top to prevent vertical shifting */
-            height: 60px;
-            width: 750px; /* Fixed width to prevent any right/left movement */
+            align-items: flex-start; 
+            height: 100px; /* Increased height for bigger logos */
+            width: 950px; /* Increased width to maintain proportions */
             box-shadow: 0 4px 10px rgba(0,0,0,0.4);
             border-radius: 4px;
         }
 
-        /* TIMER BOX - MODIFIED FOR VERTICAL STOPPAGE */
+        /* TIMER BOX */
         .timer-box { 
             background: var(--timer-bg); 
             color: white; 
             height: 100%; 
-            width: 120px; /* Fixed width */
+            width: 150px; /* Increased width */
             display: flex; 
-            flex-direction: column; /* Stack minutes and extra time vertically */
+            flex-direction: column; 
             justify-content: center; 
             align-items: center; 
             z-index: 5;
         }
 
         .main-time {
-            font-size: 32px; 
+            font-size: 44px; /* Bigger font for bigger box */
             font-weight: 400;
             line-height: 1;
         }
 
         .extra-time {
-            font-size: 16px; 
-            color: #ffb700; /* Yellowish color for stoppage time */
+            font-size: 20px; /* Bigger font */
+            color: #ffb700; 
             font-weight: 700;
-            margin-top: 2px;
+            margin-top: 4px;
         }
 
         .team-section {
@@ -55,15 +55,16 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 32px;
+            font-size: 40px; /* Bigger font */
             font-weight: 700;
         }
 
+        /* BIGGER LOGO SPACE */
         .flag {
-            width: 50px;
-            height: 30px;
-            object-fit: cover;
-            margin: 0 10px;
+            width: 120px; /* Significantly wider */
+            height: 80px;  /* Significantly taller */
+            object-fit: contain; /* Ensures full logo is visible */
+            margin: 0 15px;
             border: 1px solid rgba(0,0,0,0.1);
         }
 
@@ -71,18 +72,18 @@
             background: var(--score-bg);
             color: white;
             height: 100%;
-            min-width: 70px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 48px;
+            min-width: 90px; /* Increased width */
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            font-size: 60px; /* Bigger font */
             font-weight: 400;
             border-left: 2px solid #333;
             border-right: 2px solid #333;
         }
 
         /* CONTROLLER LAYOUT */
-        .controller { background: #2b2b2b; color: white; padding: 20px; border-radius: 10px; width: 950px; margin: 180px auto 40px auto; border: 1px solid #444; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; position: relative; z-index: 10; }
+        .controller { background: #2b2b2b; color: white; padding: 20px; border-radius: 10px; width: 950px; margin: 220px auto 40px auto; border: 1px solid #444; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; position: relative; z-index: 10; }
         .control-box { border: 1px solid #444; padding: 12px; border-radius: 6px; background: #333; }
         h3 { margin-top: 0; font-size: 13px; text-transform: uppercase; color: #aaa; border-bottom: 1px solid #555; padding-bottom: 5px; }
         .input-row { display: flex; align-items: center; margin-bottom: 8px; font-size: 12px; }
@@ -186,12 +187,11 @@
             let m = Math.floor(totalSecs / 60); 
             let rs = totalSecs % 60; 
 
-            // Stoppage logic: Show base minute + extra time below
             if (totalSecs > 2700 && !isSecondHalf) {
                 uiMain.innerText = "45:00";
                 uiExtra.innerText = "+" + pad(m-45) + ":" + pad(rs);
             } 
-            else if (totalSecs > 5400) { // 90+ Stoppage
+            else if (totalSecs > 5400) { 
                  uiMain.innerText = "90:00";
                  uiExtra.innerText = "+" + pad(m-90) + ":" + pad(rs);
             }
