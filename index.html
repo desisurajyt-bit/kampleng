@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>AFCON Horizontal Style - Pro Controller v9.8</title>
+    <title>AFCON Horizontal Style - Pro Controller v10.2</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap');
         :root { --panel-bg: #2b2b2b; --timer-bg: #1a1a1a; --score-bg: #000000; --team-bg: #e0e0e0; }
         body { margin: 0; padding: 20px; font-family: 'Roboto', sans-serif; background: transparent; overflow-x: hidden; }
         
-        /* SCOREBOARD CONTAINER - FIXED POSITIONING */
+        /* SCOREBOARD CONTAINER - FIXED POSITIONING[cite: 5] */
         .scoreboard-container { 
             position: fixed; 
             top: 20px; 
@@ -16,35 +16,35 @@
             display: flex; 
             align-items: flex-start; 
             height: 100px; 
-            width: 1000px; /* Increased fixed width to prevent any movement */
+            width: 1000px; 
             box-shadow: 0 4px 10px rgba(0,0,0,0.4);
             border-radius: 4px;
         }
 
-        /* TIMER BOX - WIDER & LARGER TEXT */
+        /* TIMER BOX - OPTIMIZED WITH FIXED WIDTH[cite: 5] */
         .timer-box { 
             background: var(--timer-bg); 
             color: white; 
             height: 100%; 
-            width: 180px; /* Wider timer box */
+            width: 320px; 
             display: flex; 
             flex-direction: column; 
             justify-content: center; 
             align-items: center; 
             z-index: 5;
+            text-align: center;
+            padding: 0 12px;
+            box-sizing: border-box;
+            overflow: hidden;
         }
 
         .main-time {
-            font-size: 56px; /* Bigger timer font */
+            font-size: 76px; 
             font-weight: 700;
-            line-height: 1;
-        }
-
-        .extra-time {
-            font-size: 24px; /* Bigger stoppage font */
-            color: #ffb700; 
-            font-weight: 700;
-            margin-top: 4px;
+            line-height: 1.0;
+            white-space: nowrap;
+            letter-spacing: -1px;
+            transition: font-size 0.1s ease-in-out; 
         }
 
         .team-section {
@@ -59,7 +59,6 @@
             font-weight: 700;
         }
 
-        /* LARGE LOGO SPACE */
         .flag {
             width: 120px; 
             height: 80px;  
@@ -82,15 +81,24 @@
             border-right: 2px solid #333;
         }
 
-        /* CONTROLLER LAYOUT */
+        /* CONTROLLER LAYOUT[cite: 5] */
         .controller { background: #2b2b2b; color: white; padding: 20px; border-radius: 10px; width: 950px; margin: 240px auto 40px auto; border: 1px solid #444; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; position: relative; z-index: 10; }
         .control-box { border: 1px solid #444; padding: 12px; border-radius: 6px; background: #333; }
         h3 { margin-top: 0; font-size: 13px; text-transform: uppercase; color: #aaa; border-bottom: 1px solid #555; padding-bottom: 5px; }
         .input-row { display: flex; align-items: center; margin-bottom: 8px; font-size: 12px; }
         .input-row label { width: 150px; }
         input { padding: 5px; border: 1px solid #555; border-radius: 4px; background: #222; color: white; }
+        input[type="color"] { border: none; width: 55px; height: 28px; background: transparent; cursor: pointer; padding: 0; }
         .short { width: 60px; text-align: center; }
         .full { flex-grow: 1; }
+        
+        /* Goal Adjusters[cite: 4] */
+        .goal-adjust-zone { display: flex; gap: 5px; margin-left: 10px; }
+        .btn-goal { padding: 4px 10px; font-size: 12px; font-weight: bold; cursor: pointer; border: none; border-radius: 3px; background: #444; color: #fff; transition: 0.1s; }
+        .btn-goal:hover { background: #555; }
+        .btn-goal.plus { background: #28a745; }
+        .btn-goal.plus:hover { background: #218838; }
+
         .button-zone { grid-column: span 2; display: flex; gap: 10px; justify-content: center; }
         button { padding: 10px 22px; font-weight: bold; cursor: pointer; border: none; border-radius: 4px; text-transform: uppercase; transition: 0.2s; }
         .btn-start { background: #28a745; color: white; }
@@ -100,10 +108,10 @@
 </head>
 <body>
 
+    <!-- OVERLAY LAYOUT DISPLAY[cite: 5] -->
     <div class="scoreboard-container">
         <div class="timer-box">
             <span id="ui-main-time" class="main-time">LIVE</span>
-            <span id="ui-extra-time" class="extra-time"></span>
         </div>
         <div class="team-section">
             <img id="ui-h-flag" src="" class="flag">
@@ -117,22 +125,48 @@
         </div>
     </div>
 
+    <!-- GRAPHICAL INTERFACE CONTROLLER[cite: 5] -->
     <div class="controller">
         <div class="control-box">
             <h3>Match Timing</h3>
-            <div class="input-row"><label>Manual (M:S):</label><input type="number" id="cfg-m" class="short" value="0" oninput="manualSync()"> : <input type="number" id="cfg-s" class="short" value="0" oninput="manualSync()"></div>
+            <div class="input-row"><label>Manual (M:S):</label><input type="number" id="cfg-m" class="short" value="0" oninput="manualTimeAdjustment()"> : <input type="number" id="cfg-s" class="short" value="0" oninput="manualTimeAdjustment()"></div>
             <div class="input-row"><label>Kickoff (HH:MM):</label><input type="number" id="cfg-sh" class="short" placeholder="HH"> : <input type="number" id="cfg-sm" class="short" placeholder="MM"></div>
         </div>
         <div class="control-box">
-            <h3>Match Data</h3>
-            <div class="input-row"><label>Home Name/Goal:</label><input type="text" id="cfg-hn" class="short" value="EGY"> <input type="number" id="cfg-hg" class="short" value="0"></div>
-            <div class="input-row"><label>Away Name/Goal:</label><input type="text" id="cfg-an" class="short" value="BEN"> <input type="number" id="cfg-ag" class="short" value="0"></div>
+            <h3>Match Data[cite: 4, 5]</h3>
+            <div class="input-row">
+                <label>Home Name/Goal:</label>
+                <input type="text" id="cfg-hn" class="short" value="EGY"> 
+                <input type="number" id="cfg-hg" class="short" value="0">
+                <div class="goal-adjust-zone">
+                    <button class="btn-goal plus" onclick="adjustGoal('cfg-hg', 1)">+1</button>
+                    <button class="btn-goal" onclick="adjustGoal('cfg-hg', -1)">-1</button>
+                </div>
+            </div>
+            <div class="input-row">
+                <label>Away Name/Goal:</label>
+                <input type="text" id="cfg-an" class="short" value="BEN"> 
+                <input type="number" id="cfg-ag" class="short" value="0">
+                <div class="goal-adjust-zone">
+                    <button class="btn-goal plus" onclick="adjustGoal('cfg-ag', 1)">+1</button>
+                    <button class="btn-goal" onclick="adjustGoal('cfg-ag', -1)">-1</button>
+                </div>
+            </div>
         </div>
+        
+        <!-- UPGRADED VISUAL STYLING PANEL WITH COLOR PICKERS[cite: 5] -->
         <div class="control-box">
             <h3>Visuals</h3>
-            <div class="input-row"><label>Team BG Color:</label><input type="text" id="cfg-t-bg" class="full" value="#e0e0e0"></div>
-            <div class="input-row"><label>Team Text Color:</label><input type="text" id="cfg-t-clr" class="full" value="#000000"></div>
+            <div class="input-row">
+                <label>Team Background Color:</label>
+                <input type="color" id="cfg-t-bg" value="#e0e0e0">
+            </div>
+            <div class="input-row">
+                <label>Team Text Color:</label>
+                <input type="color" id="cfg-t-clr" value="#000000">
+            </div>
         </div>
+        
         <div class="control-box">
             <h3>Flag Links</h3>
             <div class="input-row"><label>Home Flag:</label><input type="text" id="cfg-h-f" class="full" value="https://flagcdn.com/w160/eg.png"></div>
@@ -150,10 +184,6 @@
         let totalSecs = 0; 
         let matchInterval = null; 
         let isStarted = false; 
-        let isBreakStatic = false;
-        let staticElapsed = 0;
-        let isSecondHalf = false;
-        let lastAutoStartMin = -1;
 
         function updateUI() {
             document.getElementById('ui-h-name').innerText = document.getElementById('cfg-hn').value.toUpperCase();
@@ -169,96 +199,152 @@
 
             let pad = (v) => v < 10 ? "0"+v : v;
             let uiMain = document.getElementById('ui-main-time');
-            let uiExtra = document.getElementById('ui-extra-time');
 
-            if (!isStarted && !isBreakStatic) {
+            if (!isStarted && totalSecs === 0) {
                 uiMain.innerText = "LIVE";
-                uiExtra.innerText = "";
+                uiMain.style.fontSize = "76px"; 
                 return;
             }
 
-            if (isBreakStatic) {
-                uiMain.innerText = "45:00";
-                uiExtra.innerText = "+09:00";
-                return;
+            // Tournament Segment Sequential Engine Loops[cite: 4]
+            // Stage 1: Regulation First Half (0 to 45 mins)[cite: 4]
+            if (totalSecs <= 2700) {
+                let m = Math.floor(totalSecs / 60);
+                let s = totalSecs % 60;
+                uiMain.innerText = pad(m) + ":" + pad(s);
+                uiMain.style.fontSize = "76px"; 
             }
-
-            let m = Math.floor(totalSecs / 60); 
-            let rs = totalSecs % 60; 
-
-            if (totalSecs > 2700 && !isSecondHalf) {
-                uiMain.innerText = "45:00";
-                uiExtra.innerText = "+" + pad(m-45) + ":" + pad(rs);
-            } 
-            else if (totalSecs > 5400) { 
-                 uiMain.innerText = "90:00";
-                 uiExtra.innerText = "+" + pad(m-90) + ":" + pad(rs);
+            // Stage 2: First Half Injury Tracking (45 to 52 mins)[cite: 4]
+            else if (totalSecs <= 3120) {
+                let extraSecs = totalSecs - 2700;
+                let em = Math.floor(extraSecs / 60);
+                let es = extraSecs % 60;
+                uiMain.innerText = "45:00 +" + pad(em) + ":" + pad(es);
+                uiMain.style.fontSize = "42px"; /* Dynamic compression fix */
             }
+            // Stage 3: Studio Break / Balance Banner Block (52 to 62 mins)[cite: 4]
+            else if (totalSecs <= 3720) {
+                uiMain.innerText = "45+ 9 MINS";
+                uiMain.style.fontSize = "54px"; 
+            }
+            // Stage 4: Regulation Second Half (45:00 to 90:00)[cite: 4]
+            else if (totalSecs <= 6420) {
+                let secondHalfElapsed = totalSecs - 3720;
+                let activeSecs = (45 * 60) + secondHalfElapsed;
+                let m = Math.floor(activeSecs / 60);
+                let s = activeSecs % 60;
+                uiMain.innerText = pad(m) + ":" + pad(s);
+                uiMain.style.fontSize = "76px"; 
+            }
+            // Stage 5: Second Half Injury Tracking (90 to 110 mins)[cite: 4]
+            else if (totalSecs <= 7620) {
+                let extraSecs = totalSecs - 6420;
+                let em = Math.floor(extraSecs / 60);
+                let es = extraSecs % 60;
+                uiMain.innerText = "90:00 +" + pad(em) + ":" + pad(es);
+                uiMain.style.fontSize = "42px"; /* Dynamic compression fix */
+            }
+            // Stage 6: Extra Time Regulation (90:00 to 120:00)[cite: 4]
+            else if (totalSecs <= 9420) {
+                let extraTimeElapsed = totalSecs - 7620;
+                let activeSecs = (90 * 60) + extraTimeElapsed;
+                let m = Math.floor(activeSecs / 60);
+                let s = activeSecs % 60;
+                uiMain.innerText = pad(m) + ":" + pad(s);
+                uiMain.style.fontSize = "76px"; 
+            }
+            // Stage 7: Final Termination Boundary Block[cite: 4]
             else {
-                uiMain.innerText = pad(m) + ":" + pad(rs);
-                uiExtra.innerText = "";
+                uiMain.innerText = "120 MINS + 5 MINS";
+                uiMain.style.fontSize = "40px";
             }
         }
 
-        function manualSync() {
-            let manualMin = parseInt(document.getElementById('cfg-m').value) || 0;
-            let manualSec = parseInt(document.getElementById('cfg-s').value) || 0;
-            totalSecs = manualMin * 60 + manualSec;
-            isSecondHalf = manualMin >= 45;
+        function adjustGoal(inputId, amount) {
+            const input = document.getElementById(inputId);
+            let currentVal = parseInt(input.value) || 0;
+            let newVal = currentVal + amount;
+            if (newVal < 0) newVal = 0;
+            input.value = newVal;
             updateUI();
         }
 
-        function handleTimeFlow() {
-            if (totalSecs === 3240 && !isSecondHalf && !isBreakStatic) {
-                isBreakStatic = true;
-                staticElapsed = 0;
-                return;
-            }
-
-            if (isBreakStatic) {
-                staticElapsed++;
-                if (staticElapsed >= 480) { 
-                    isBreakStatic = false;
-                    isSecondHalf = true;
-                    totalSecs = 2700; 
-                }
+        function manualTimeAdjustment() {
+            let m = parseInt(document.getElementById('cfg-m').value) || 0;
+            let s = parseInt(document.getElementById('cfg-s').value) || 0;
+            
+            if (m < 45) {
+                totalSecs = m * 60 + s;
+            } else if (m === 45) {
+                totalSecs = 2700 + s; 
+            } else if (m > 45 && m < 90) {
+                totalSecs = 3720 + ((m - 45) * 60) + s;
+            } else if (m === 90) {
+                totalSecs = 6420 + s;
+            } else if (m > 90 && m <= 120) {
+                totalSecs = 7620 + ((m - 90) * 60) + s;
             } else {
-                totalSecs++;
+                totalSecs = 9421;
+            }
+            updateUI();
+        }
+
+        function syncInputsFromSeconds() {
+            if (document.activeElement === document.getElementById('cfg-m') || document.activeElement === document.getElementById('cfg-s')) return;
+
+            if (totalSecs <= 2700) {
                 document.getElementById('cfg-m').value = Math.floor(totalSecs / 60);
                 document.getElementById('cfg-s').value = totalSecs % 60;
+            } else if (totalSecs <= 3120) {
+                document.getElementById('cfg-m').value = 45;
+                document.getElementById('cfg-s').value = totalSecs - 2700;
+            } else if (totalSecs <= 3720) {
+                document.getElementById('cfg-m').value = 45;
+                document.getElementById('cfg-s').value = 0;
+            } else if (totalSecs <= 6420) {
+                let secondHalfElapsed = totalSecs - 3720;
+                let activeSecs = (45 * 60) + secondHalfElapsed;
+                document.getElementById('cfg-m').value = Math.floor(activeSecs / 60);
+                document.getElementById('cfg-s').value = activeSecs % 60;
+            } else if (totalSecs <= 7620) {
+                document.getElementById('cfg-m').value = 90;
+                document.getElementById('cfg-s').value = totalSecs - 6420;
+            } else if (totalSecs <= 9420) {
+                let extraTimeElapsed = totalSecs - 7620;
+                let activeSecs = (90 * 60) + extraTimeElapsed;
+                document.getElementById('cfg-m').value = Math.floor(activeSecs / 60);
+                document.getElementById('cfg-s').value = activeSecs % 60;
+            } else {
+                document.getElementById('cfg-m').value = 120;
+                document.getElementById('cfg-s').value = 0;
             }
-            updateUI();
         }
 
         function startTimer() { 
             if (matchInterval) return; 
-            isStarted = true;
-            manualSync();
-            matchInterval = setInterval(handleTimeFlow, 1000); 
-            updateUI();
+            isStarted = true; 
+            matchInterval = setInterval(() => { 
+                totalSecs++; 
+                updateUI(); 
+                syncInputsFromSeconds();
+            }, 1000); 
         }
-
-        function stopTimer() { clearInterval(matchInterval); matchInterval = null; isStarted = false; updateUI(); }
         
-        function resetAll() { 
-            stopTimer(); 
-            isBreakStatic = false; isSecondHalf = false; lastAutoStartMin = -1;
-            totalSecs = 0; document.getElementById('cfg-m').value = 0; document.getElementById('cfg-s').value = 0; 
-            updateUI(); 
-        }
-
+        function stopTimer() { clearInterval(matchInterval); matchInterval = null; isStarted = false; updateUI(); }
+        function resetAll() { stopTimer(); isStarted = false; totalSecs = 0; document.getElementById('cfg-m').value = 0; document.getElementById('cfg-s').value = 0; updateUI(); }
+        
         function copyURL() {
             const params = new URLSearchParams({
                 hn: document.getElementById('cfg-hn').value, an: document.getElementById('cfg-an').value,
                 hg: document.getElementById('cfg-hg').value, ag: document.getElementById('cfg-ag').value,
                 tBg: document.getElementById('cfg-t-bg').value, tClr: document.getElementById('cfg-t-clr').value,
                 hf: document.getElementById('cfg-h-f').value, af: document.getElementById('cfg-a-f').value, 
-                sh: document.getElementById('cfg-sh').value, sm: document.getElementById('cfg-sm').value, 
-                cm: document.getElementById('cfg-m').value, cs: document.getElementById('cfg-s').value
+                sh: document.getElementById('cfg-sh').value, sm: document.getElementById('cfg-sm').value,
+                ts: totalSecs
             });
             const fullURL = window.location.href.split('?')[0] + '?' + params.toString();
             navigator.clipboard.writeText(fullURL);
-            alert("Link Copied!");
+            alert("Dual OBS Stream Sync Link Copied!");
         }
 
         window.onload = function() {
@@ -266,11 +352,15 @@
             const fields = {
                 'cfg-hn': 'hn', 'cfg-an': 'an', 'cfg-hg': 'hg', 'cfg-ag': 'ag',
                 'cfg-t-bg': 'tBg', 'cfg-t-clr': 'tClr', 'cfg-h-f': 'hf', 'cfg-a-f': 'af', 
-                'cfg-sh': 'sh', 'cfg-sm': 'sm', 'cfg-m': 'cm', 'cfg-s': 'cs'
+                'cfg-sh': 'sh', 'cfg-sm': 'sm'
             };
             for (let id in fields) {
                 let val = urlParams.get(fields[id]);
                 if (val !== null) document.getElementById(id).value = val;
+            }
+            if (urlParams.has('ts')) {
+                totalSecs = parseInt(urlParams.get('ts')) || 0;
+                syncInputsFromSeconds();
             }
             updateUI();
         };
@@ -279,15 +369,14 @@
             let h = document.getElementById('cfg-sh').value; 
             let m = document.getElementById('cfg-sm').value; 
             let now = new Date();
-            if (h !== "" && m !== "" && !isStarted && !isBreakStatic) { 
-                if (now.getHours() == parseInt(h) && now.getMinutes() == parseInt(m) && lastAutoStartMin !== now.getMinutes()) {
-                    lastAutoStartMin = now.getMinutes();
+            if (h !== "" && m !== "" && !isStarted) { 
+                if (now.getHours() == parseInt(h) && now.getMinutes() == parseInt(m)) {
                     startTimer(); 
                 }
             } 
         }, 1000);
 
-        setInterval(updateUI, 500);
+        setInterval(updateUI, 200);
     </script>
 </body>
 </html>
