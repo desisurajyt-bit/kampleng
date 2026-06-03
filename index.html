@@ -2,13 +2,22 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>AFCON Horizontal Style - Pro Controller v10.2</title>
+    <title>AFCON Horizontal Style - Pro Controller v10.3</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap');
-        :root { --panel-bg: #2b2b2b; --timer-bg: #1a1a1a; --score-bg: #000000; --team-bg: #e0e0e0; }
+        :root { 
+            --panel-bg: #2b2b2b; 
+            --timer-bg: #1a1a1a; 
+            --timer-txt: #ffffff;
+            --score-bg: #000000; 
+            --home-bg: #e0e0e0; 
+            --home-txt: #000000;
+            --away-bg: #e0e0e0;
+            --away-txt: #000000;
+        }
         body { margin: 0; padding: 20px; font-family: 'Roboto', sans-serif; background: transparent; overflow-x: hidden; }
         
-        /* SCOREBOARD CONTAINER - FIXED POSITIONING[cite: 5] */
+        /* SCOREBOARD CONTAINER - FIXED POSITIONING */
         .scoreboard-container { 
             position: fixed; 
             top: 20px; 
@@ -21,10 +30,10 @@
             border-radius: 4px;
         }
 
-        /* TIMER BOX - OPTIMIZED WITH FIXED WIDTH[cite: 5] */
+        /* TIMER BOX - OPTIMIZED WITH FIXED WIDTH */
         .timer-box { 
             background: var(--timer-bg); 
-            color: white; 
+            color: var(--timer-txt); 
             height: 100%; 
             width: 320px; 
             display: flex; 
@@ -48,8 +57,6 @@
         }
 
         .team-section {
-            background: var(--team-bg);
-            color: black;
             height: 100%;
             flex-grow: 1;
             display: flex;
@@ -57,6 +64,16 @@
             justify-content: center;
             font-size: 40px; 
             font-weight: 700;
+        }
+        
+        .team-home {
+            background: var(--home-bg);
+            color: var(--home-txt);
+        }
+        
+        .team-away {
+            background: var(--away-bg);
+            color: var(--away-txt);
         }
 
         .flag {
@@ -81,7 +98,7 @@
             border-right: 2px solid #333;
         }
 
-        /* CONTROLLER LAYOUT[cite: 5] */
+        /* CONTROLLER LAYOUT */
         .controller { background: #2b2b2b; color: white; padding: 20px; border-radius: 10px; width: 950px; margin: 240px auto 40px auto; border: 1px solid #444; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; position: relative; z-index: 10; }
         .control-box { border: 1px solid #444; padding: 12px; border-radius: 6px; background: #333; }
         h3 { margin-top: 0; font-size: 13px; text-transform: uppercase; color: #aaa; border-bottom: 1px solid #555; padding-bottom: 5px; }
@@ -92,7 +109,7 @@
         .short { width: 60px; text-align: center; }
         .full { flex-grow: 1; }
         
-        /* Goal Adjusters[cite: 4] */
+        /* Goal Adjusters */
         .goal-adjust-zone { display: flex; gap: 5px; margin-left: 10px; }
         .btn-goal { padding: 4px 10px; font-size: 12px; font-weight: bold; cursor: pointer; border: none; border-radius: 3px; background: #444; color: #fff; transition: 0.1s; }
         .btn-goal:hover { background: #555; }
@@ -108,24 +125,24 @@
 </head>
 <body>
 
-    <!-- OVERLAY LAYOUT DISPLAY[cite: 5] -->
+    <!-- OVERLAY LAYOUT DISPLAY -->
     <div class="scoreboard-container">
-        <div class="timer-box">
+        <div class="timer-box" id="ui-timer-box">
             <span id="ui-main-time" class="main-time">LIVE</span>
         </div>
-        <div class="team-section">
+        <div class="team-section team-home" id="ui-home-section">
             <img id="ui-h-flag" src="" class="flag">
             <span id="ui-h-name">EGY</span>
         </div>
         <div class="score-box" id="ui-h-score">0</div>
         <div class="score-box" id="ui-a-score">0</div>
-        <div class="team-section">
+        <div class="team-section team-away" id="ui-away-section">
             <span id="ui-a-name">BEN</span>
             <img id="ui-a-flag" src="" class="flag">
         </div>
     </div>
 
-    <!-- GRAPHICAL INTERFACE CONTROLLER[cite: 5] -->
+    <!-- GRAPHICAL INTERFACE CONTROLLER -->
     <div class="controller">
         <div class="control-box">
             <h3>Match Timing</h3>
@@ -133,7 +150,7 @@
             <div class="input-row"><label>Kickoff (HH:MM):</label><input type="number" id="cfg-sh" class="short" placeholder="HH"> : <input type="number" id="cfg-sm" class="short" placeholder="MM"></div>
         </div>
         <div class="control-box">
-            <h3>Match Data[cite: 4, 5]</h3>
+            <h3>Match Data</h3>
             <div class="input-row">
                 <label>Home Name/Goal:</label>
                 <input type="text" id="cfg-hn" class="short" value="EGY"> 
@@ -154,16 +171,23 @@
             </div>
         </div>
         
-        <!-- UPGRADED VISUAL STYLING PANEL WITH COLOR PICKERS[cite: 5] -->
+        <!-- INDEPENDENT COLOR CONTROLS -->
         <div class="control-box">
-            <h3>Visuals</h3>
+            <h3>Visual Customization</h3>
             <div class="input-row">
-                <label>Team Background Color:</label>
-                <input type="color" id="cfg-t-bg" value="#e0e0e0">
+                <label>Home Team Style:</label>
+                <input type="color" id="clr-h-bg" value="#e0e0e0">&nbsp;BG&nbsp;&nbsp;
+                <input type="color" id="clr-h-txt" value="#000000">&nbsp;Text
             </div>
             <div class="input-row">
-                <label>Team Text Color:</label>
-                <input type="color" id="cfg-t-clr" value="#000000">
+                <label>Away Team Style:</label>
+                <input type="color" id="clr-a-bg" value="#e0e0e0">&nbsp;BG&nbsp;&nbsp;
+                <input type="color" id="clr-a-txt" value="#000000">&nbsp;Text
+            </div>
+            <div class="input-row">
+                <label>Timer Module Style:</label>
+                <input type="color" id="clr-t-bg" value="#1a1a1a">&nbsp;BG&nbsp;&nbsp;
+                <input type="color" id="clr-t-txt" value="#ffffff">&nbsp;Text
             </div>
         </div>
         
@@ -184,6 +208,7 @@
         let totalSecs = 0; 
         let matchInterval = null; 
         let isStarted = false; 
+        let forceSecondHalfStart = false;
 
         function updateUI() {
             document.getElementById('ui-h-name').innerText = document.getElementById('cfg-hn').value.toUpperCase();
@@ -193,9 +218,20 @@
             document.getElementById('ui-h-flag').src = document.getElementById('cfg-h-f').value; 
             document.getElementById('ui-a-flag').src = document.getElementById('cfg-a-f').value;
             
-            const tBg = document.getElementById('cfg-t-bg').value; 
-            const tClr = document.getElementById('cfg-t-clr').value;
-            document.querySelectorAll('.team-section').forEach(el => { el.style.backgroundColor = tBg; el.style.color = tClr; });
+            // Map color controls independently
+            const hBg = document.getElementById('clr-h-bg').value;
+            const hTxt = document.getElementById('clr-h-txt').value;
+            const aBg = document.getElementById('clr-a-bg').value;
+            const aTxt = document.getElementById('clr-a-txt').value;
+            const tBg = document.getElementById('clr-t-bg').value;
+            const tTxt = document.getElementById('clr-t-txt').value;
+
+            document.documentElement.style.setProperty('--home-bg', hBg);
+            document.documentElement.style.setProperty('--home-txt', hTxt);
+            document.documentElement.style.setProperty('--away-bg', aBg);
+            document.documentElement.style.setProperty('--away-txt', aTxt);
+            document.documentElement.style.setProperty('--timer-bg', tBg);
+            document.documentElement.style.setProperty('--timer-txt', tTxt);
 
             let pad = (v) => v < 10 ? "0"+v : v;
             let uiMain = document.getElementById('ui-main-time');
@@ -206,45 +242,48 @@
                 return;
             }
 
-            // Tournament Segment Sequential Engine Loops[cite: 4]
-            // Stage 1: Regulation First Half (0 to 45 mins)[cite: 4]
-            if (totalSecs <= 2700) {
+            // Stage 1: Regulation First Half (0 to 45 mins)
+            if (totalSecs <= 2700 && !forceSecondHalfStart) {
                 let m = Math.floor(totalSecs / 60);
                 let s = totalSecs % 60;
                 uiMain.innerText = pad(m) + ":" + pad(s);
                 uiMain.style.fontSize = "76px"; 
             }
-            // Stage 2: First Half Injury Tracking (45 to 52 mins)[cite: 4]
-            else if (totalSecs <= 3120) {
+            // Stage 2: First Half Injury Tracking (45 to 52 mins)
+            else if (totalSecs <= 3120 && !forceSecondHalfStart) {
                 let extraSecs = totalSecs - 2700;
                 let em = Math.floor(extraSecs / 60);
                 let es = extraSecs % 60;
                 uiMain.innerText = "45:00 +" + pad(em) + ":" + pad(es);
-                uiMain.style.fontSize = "42px"; /* Dynamic compression fix */
+                uiMain.style.fontSize = "42px"; 
             }
-            // Stage 3: Studio Break / Balance Banner Block (52 to 62 mins)[cite: 4]
-            else if (totalSecs <= 3720) {
-                uiMain.innerText = "45+ 9 MINS";
-                uiMain.style.fontSize = "54px"; 
+            // Stage 3: Studio Break / Balance Banner Block (52 to 62 mins)
+            else if (totalSecs <= 3720 && !forceSecondHalfStart) {
+                uiMain.innerText = "45+ 9"; // Cleaned text style
+                uiMain.style.fontSize = "65px"; 
             }
-            // Stage 4: Regulation Second Half (45:00 to 90:00)[cite: 4]
-            else if (totalSecs <= 6420) {
-                let secondHalfElapsed = totalSecs - 3720;
+            // Stage 4: Regulation Second Half (45:00 to 90:00)
+            else if (totalSecs <= 6420 || (forceSecondHalfStart && totalSecs <= 6420)) {
+                let currentElapsed = totalSecs;
+                if (forceSecondHalfStart && totalSecs < 3720) {
+                    currentElapsed = 3721 + totalSecs; 
+                }
+                let secondHalfElapsed = currentElapsed - 3720;
                 let activeSecs = (45 * 60) + secondHalfElapsed;
                 let m = Math.floor(activeSecs / 60);
                 let s = activeSecs % 60;
                 uiMain.innerText = pad(m) + ":" + pad(s);
                 uiMain.style.fontSize = "76px"; 
             }
-            // Stage 5: Second Half Injury Tracking (90 to 110 mins)[cite: 4]
+            // Stage 5: Second Half Injury Tracking (90 to 110 mins)
             else if (totalSecs <= 7620) {
                 let extraSecs = totalSecs - 6420;
                 let em = Math.floor(extraSecs / 60);
                 let es = extraSecs % 60;
                 uiMain.innerText = "90:00 +" + pad(em) + ":" + pad(es);
-                uiMain.style.fontSize = "42px"; /* Dynamic compression fix */
+                uiMain.style.fontSize = "42px"; 
             }
-            // Stage 6: Extra Time Regulation (90:00 to 120:00)[cite: 4]
+            // Stage 6: Extra Time Regulation (90:00 to 120:00)
             else if (totalSecs <= 9420) {
                 let extraTimeElapsed = totalSecs - 7620;
                 let activeSecs = (90 * 60) + extraTimeElapsed;
@@ -253,7 +292,7 @@
                 uiMain.innerText = pad(m) + ":" + pad(s);
                 uiMain.style.fontSize = "76px"; 
             }
-            // Stage 7: Final Termination Boundary Block[cite: 4]
+            // Stage 7: Final Termination Boundary Block
             else {
                 uiMain.innerText = "120 MINS + 5 MINS";
                 uiMain.style.fontSize = "40px";
@@ -275,16 +314,26 @@
             
             if (m < 45) {
                 totalSecs = m * 60 + s;
-            } else if (m === 45) {
+                forceSecondHalfStart = false;
+            } else if (m === 45 && s === 0) {
+                // If user sets exactly 45:00 manually, flag it to bypass extra time rules entirely
+                totalSecs = 0; 
+                forceSecondHalfStart = true;
+            } else if (m === 45 && s > 0) {
                 totalSecs = 2700 + s; 
+                forceSecondHalfStart = false;
             } else if (m > 45 && m < 90) {
                 totalSecs = 3720 + ((m - 45) * 60) + s;
+                forceSecondHalfStart = false;
             } else if (m === 90) {
                 totalSecs = 6420 + s;
+                forceSecondHalfStart = false;
             } else if (m > 90 && m <= 120) {
                 totalSecs = 7620 + ((m - 90) * 60) + s;
+                forceSecondHalfStart = false;
             } else {
                 totalSecs = 9421;
+                forceSecondHalfStart = false;
             }
             updateUI();
         }
@@ -292,25 +341,30 @@
         function syncInputsFromSeconds() {
             if (document.activeElement === document.getElementById('cfg-m') || document.activeElement === document.getElementById('cfg-s')) return;
 
-            if (totalSecs <= 2700) {
-                document.getElementById('cfg-m').value = Math.floor(totalSecs / 60);
-                document.getElementById('cfg-s').value = totalSecs % 60;
-            } else if (totalSecs <= 3120) {
+            let checkSecs = totalSecs;
+            if (forceSecondHalfStart && totalSecs < 3720) {
+                checkSecs = 3721 + totalSecs;
+            }
+
+            if (checkSecs <= 2700) {
+                document.getElementById('cfg-m').value = Math.floor(checkSecs / 60);
+                document.getElementById('cfg-s').value = checkSecs % 60;
+            } else if (checkSecs <= 3120) {
                 document.getElementById('cfg-m').value = 45;
-                document.getElementById('cfg-s').value = totalSecs - 2700;
-            } else if (totalSecs <= 3720) {
+                document.getElementById('cfg-s').value = checkSecs - 2700;
+            } else if (checkSecs <= 3720) {
                 document.getElementById('cfg-m').value = 45;
                 document.getElementById('cfg-s').value = 0;
-            } else if (totalSecs <= 6420) {
-                let secondHalfElapsed = totalSecs - 3720;
+            } else if (checkSecs <= 6420) {
+                let secondHalfElapsed = checkSecs - 3720;
                 let activeSecs = (45 * 60) + secondHalfElapsed;
                 document.getElementById('cfg-m').value = Math.floor(activeSecs / 60);
                 document.getElementById('cfg-s').value = activeSecs % 60;
-            } else if (totalSecs <= 7620) {
+            } else if (checkSecs <= 7620) {
                 document.getElementById('cfg-m').value = 90;
-                document.getElementById('cfg-s').value = totalSecs - 6420;
-            } else if (totalSecs <= 9420) {
-                let extraTimeElapsed = totalSecs - 7620;
+                document.getElementById('cfg-s').value = checkSecs - 6420;
+            } else if (checkSecs <= 9420) {
+                let extraTimeElapsed = checkSecs - 7620;
                 let activeSecs = (90 * 60) + extraTimeElapsed;
                 document.getElementById('cfg-m').value = Math.floor(activeSecs / 60);
                 document.getElementById('cfg-s').value = activeSecs % 60;
@@ -331,16 +385,18 @@
         }
         
         function stopTimer() { clearInterval(matchInterval); matchInterval = null; isStarted = false; updateUI(); }
-        function resetAll() { stopTimer(); isStarted = false; totalSecs = 0; document.getElementById('cfg-m').value = 0; document.getElementById('cfg-s').value = 0; updateUI(); }
+        function resetAll() { stopTimer(); isStarted = false; forceSecondHalfStart = false; totalSecs = 0; document.getElementById('cfg-m').value = 0; document.getElementById('cfg-s').value = 0; updateUI(); }
         
         function copyURL() {
             const params = new URLSearchParams({
                 hn: document.getElementById('cfg-hn').value, an: document.getElementById('cfg-an').value,
                 hg: document.getElementById('cfg-hg').value, ag: document.getElementById('cfg-ag').value,
-                tBg: document.getElementById('cfg-t-bg').value, tClr: document.getElementById('cfg-t-clr').value,
+                hbg: document.getElementById('clr-h-bg').value, htx: document.getElementById('clr-h-txt').value,
+                abg: document.getElementById('clr-a-bg').value, atx: document.getElementById('clr-a-txt').value,
+                tbg: document.getElementById('clr-t-bg').value, ttx: document.getElementById('clr-t-txt').value,
                 hf: document.getElementById('cfg-h-f').value, af: document.getElementById('cfg-a-f').value, 
                 sh: document.getElementById('cfg-sh').value, sm: document.getElementById('cfg-sm').value,
-                ts: totalSecs
+                ts: totalSecs, fsh: forceSecondHalfStart ? "1" : "0"
             });
             const fullURL = window.location.href.split('?')[0] + '?' + params.toString();
             navigator.clipboard.writeText(fullURL);
@@ -351,7 +407,8 @@
             const urlParams = new URLSearchParams(window.location.search);
             const fields = {
                 'cfg-hn': 'hn', 'cfg-an': 'an', 'cfg-hg': 'hg', 'cfg-ag': 'ag',
-                'cfg-t-bg': 'tBg', 'cfg-t-clr': 'tClr', 'cfg-h-f': 'hf', 'cfg-a-f': 'af', 
+                'clr-h-bg': 'hbg', 'clr-h-txt': 'htx', 'clr-a-bg': 'abg', 'clr-a-txt': 'atx',
+                'clr-t-bg': 'tbg', 'clr-t-txt': 'ttx', 'cfg-h-f': 'hf', 'cfg-a-f': 'af', 
                 'cfg-sh': 'sh', 'cfg-sm': 'sm'
             };
             for (let id in fields) {
@@ -360,6 +417,7 @@
             }
             if (urlParams.has('ts')) {
                 totalSecs = parseInt(urlParams.get('ts')) || 0;
+                forceSecondHalfStart = urlParams.get('fsh') === "1";
                 syncInputsFromSeconds();
             }
             updateUI();
